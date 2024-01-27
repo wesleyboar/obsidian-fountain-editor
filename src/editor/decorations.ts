@@ -32,9 +32,21 @@ function getLineFormat(
 				state.inDialogue = false;
 				state.inBoneyard = true;
 			}
+			if (tId === n.fDualDialogueEnd) {
+				state.inDualDialogue = false;
+				console.log('fDualDialogueEnd');
+			}
+			if (state.inDualDialogue) {
+				return n.dualDialogue;
+			}
+			if (tId === n.fDualDialogueStart) {
+				state.inDualDialogue = true;
+				console.log('inDualDialogue');
+			}
 			if (tId === n.character) {
 				if (ctx.afterEmptyLine && !ctx.beforeEmptyLine && !ctx.isLastLine) {
 					state.inDialogue = true;
+					console.log('inDialogue');
 				} else {
 					break;
 				}
@@ -51,6 +63,9 @@ function getLineFormat(
 	}
 
 	if (state.inDialogue) {
+		return n.dialogue;
+	}
+	if (state.inDualDialogue) {
 		return n.dialogue;
 	}
 	if (state.inBoneyard) {
@@ -71,6 +86,7 @@ export function buildDecorations(view: EditorView): DecorationSet {
 
 	const state: FountainState = {
 		inDialogue: false,
+		inDualDialogue: false,
 		inBoneyard: false,
 	};
 

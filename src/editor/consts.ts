@@ -4,6 +4,9 @@ export const TOKEN_NAMES = {
 	action: "action",
 	character: "character",
 	dialogue: "dialogue",
+	dualDialogue: "dual-dialogue",
+	fDualDialogueStart: "dual-dialogue-start",
+	fDualDialogueEnd: "dual-dialogue-end",
 	parenthetical: "parenthetical",
 	lyrics: "lyrics",
 	centered: "centered",
@@ -18,6 +21,9 @@ export const TOKEN_NAMES = {
 
 const n = TOKEN_NAMES;
 
+const characterFrontReStr = "^[^\S\r\n]*(?=.*[A-Z\u00C0-\u00DEF])[A-Z0-9\u00C0-\u00DEF \t'.-]+\s?(\(.*\))?";
+const characterBackReStr = "$|@.*$/";
+
 export const LINE_TOKENS = [
 	{
 		id: n.sceneHeading,
@@ -30,12 +36,25 @@ export const LINE_TOKENS = [
 	},
 	{
 		id: n.character,
+		regex: new RegExp(characterFrontReStr + characterBackReStr),
+	},
+	{
+		id: n.character,
 		regex:
-			/^[^\S\r\n]*(?=.*[A-Z\u00C0-\u00DEF])[A-Z0-9\u00C0-\u00DEF \t'.-]+\s?(\(.*\))?$|@.*$/,
+			/^[^\S\r\n]*(?=.*[A-Z\u00C0-\u00DEF])[A-Z0-9\u00C0-\u00DEF \t'.-]+\s?(\(.*\))?\s?(\^)?$|@.*$/,
 	},
 	{
 		id: n.dialogue,
 		regex: /^[^\S\r\n]*(\^?)?(?:\n(?!\n+))([\s\S]+)/,
+	},
+	// dualDialogue: …
+	{
+		id: n.fDualDialogueStart,
+		regex: new RegExp(characterFrontReStr + characterBackReStr),
+	},
+	{
+		id: n.fDualDialogueEnd,
+		regex: new RegExp(characterFrontReStr + "\s?(\^)?" + characterBackReStr),
 	},
 	{
 		id: n.parenthetical,
